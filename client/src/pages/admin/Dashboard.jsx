@@ -31,7 +31,7 @@ const Dashboard = () => {
   return (
     <div className='flex-1 p-4 md:p-10 bg-blue-50/50'>
 
-      {/* Top Cards */}
+      
       <div className='flex flex-wrap gap-4'>
 
         <div className='flex items-center gap-4 bg-white p-4 min-w-58 rounded shadow cursor-pointer hover:scale-105 transition-all'>
@@ -60,7 +60,6 @@ const Dashboard = () => {
 
       </div>
 
-      {/* Latest Blogs Section */}
       <div className='mt-10'>
 
         <div className='flex items-center gap-3 m-4 mt-6 text-gray-600'>
@@ -85,7 +84,7 @@ const Dashboard = () => {
             <tbody>
               {dashboardData.recentBlogs?.map((blog, index) => (
                 <Blogtableitem
-                  key={blog._id}   // ✅ FIXED
+                  key={blog._id}  
                   blog={blog}
                   fetchBlogs={fetchDashboard}
                   index={index}

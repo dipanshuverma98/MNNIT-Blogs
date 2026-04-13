@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 const ListBlog = () => {
 
   const [blogs, setBlogs] = useState([])
-  const [loading, setLoading] = useState(true) // ✅ optional
+  const [loading, setLoading] = useState(true) 
   const { axios } = useAppContext();
 
   const fetchBlogs = async () => {
@@ -20,7 +20,7 @@ const ListBlog = () => {
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setLoading(false); // ✅ optional
+      setLoading(false); 
     }
   };
 

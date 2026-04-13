@@ -16,11 +16,10 @@ const Navbar = () => {
         className='w-32 sm:w-44 cursor-pointer' 
       />
 
-      {/* ✅ Right Section */}
       <div className='flex items-center gap-4'>
 
         {token ? (
-          // ✅ Logged in → Dashboard
+          
           <button 
             onClick={() => navigate('/admin')} 
             className='flex items-center gap-2 rounded-full text-sm cursor-pointer bg-primary text-white px-10 py-2.5'
@@ -29,7 +28,7 @@ const Navbar = () => {
             <img src={assets.arrow} className='w-3' alt="arrow" />
           </button>
         ) : (
-          // ❌ Not logged in → Login + Signup
+         
           <>
             <button 
               onClick={() => navigate('/admin')} 

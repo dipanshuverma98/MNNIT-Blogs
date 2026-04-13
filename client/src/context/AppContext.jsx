@@ -3,14 +3,26 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";  
 import toast from "react-hot-toast";
 
+
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+
+
+const savedToken = localStorage.getItem('token');
+const savedUser = JSON.parse(localStorage.getItem('user')); 
+
+if (savedToken) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
+}
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
     const navigate = useNavigate();
 
-    const [token, setToken] = useState(null);
+  
+    const [token, setToken] = useState(savedToken || null);
+    const [user, setUser] = useState(savedUser || null); 
+    
     const [blogs, setBlogs] = useState([]);
     const [input, setInput] = useState("");
 
@@ -23,25 +35,21 @@ export const AppProvider = ({ children }) => {
         }   
     };
 
+   
     useEffect(() => {
         if (blogs.length === 0) {
             fetchBlogs();
         }
+    }, []); 
 
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            setToken(storedToken);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-
-        }
-    }, []);
-
-    // ✅ NEW: sync token with axios
+  
     useEffect(() => {
         if (token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            localStorage.setItem('token', token);
         } else {
             delete axios.defaults.headers.common['Authorization'];
+            localStorage.removeItem('token');
         }
     }, [token]);
 
@@ -51,10 +59,12 @@ export const AppProvider = ({ children }) => {
         setToken,   
         blogs,
         setBlogs,
-        fetchBlogs, // ✅ added
+        fetchBlogs,
         input,
         setInput,
-        navigate
+        navigate,
+        user,     
+        setUser,   
     };
 
     return (

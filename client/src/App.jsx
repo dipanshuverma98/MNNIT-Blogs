@@ -23,13 +23,13 @@ const App = () => {
 
       <Routes>
 
-        {/* Public Routes */}
+    
         <Route path='/' element={<Home/>} />
         <Route path='/blog/:id' element={<Blog/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
 
-        {/* Protected Admin Routes */}
+       
         <Route path='/admin' element={token ? <Layout/> : <Login/>}>
           <Route index element={<Dashboard/>} />
           <Route path='addblog' element={<Addblog/>} />

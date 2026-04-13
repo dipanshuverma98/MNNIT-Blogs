@@ -11,14 +11,14 @@ const auth = (req, res, next) => {
       });
     }
 
-    // ✅ Handle both: "Bearer token" AND "token"
+
     const token = authHeader.startsWith("Bearer ")
       ? authHeader.split(" ")[1]
       : authHeader;
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // ✅ Ensure id exists
+   
     if (!decoded.id) {
       return res.json({
         success: false,

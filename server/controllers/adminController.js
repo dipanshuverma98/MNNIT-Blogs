@@ -3,55 +3,138 @@ import bcrypt from "bcrypt";
 import Blog from "../models/Blog.js";
 import Comment from "../models/Comment.js";
 import User from "../models/User.js";
+import nodemailer from 'nodemailer';
 
-// ✅ REGISTER
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.json({
-        success: false,
-        message: "All fields are required"
-      });
+      return res.json({ success: false, message: "All fields are required" });
     }
 
-    const existingUser = await User.findOne({ email });
+    let user = await User.findOne({ email });
 
-    if (existingUser) {
-      return res.json({
-        success: false,
-        message: "User already exists"
-      });
+
+    if (user && user.isVerified) {
+      return res.json({ success: false, message: "User already exists" });
     }
+
+ 
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+   
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); 
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword
+    if (user && !user.isVerified) {
+  
+      user.password = hashedPassword;
+      user.name = name;
+      user.otp = otp;
+      user.otpExpires = otpExpires;
+      await user.save();
+    } else {
+    
+      user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        isVerified: false,
+        otp,
+        otpExpires
+      });
+    }
+
+   
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', 
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS 
+      }
     });
 
+  
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'Your Registration OTP',
+      html: `
+        <h2>Hello ${user.name},</h2>
+        <p>Your One-Time Password (OTP) for registration is:</p>
+        <h1 style="color: blue; letter-spacing: 5px;">${otp}</h1>
+        <p>This code will expire in 10 minutes.</p>
+      `
+    });
+
+    res.json({
+      success: true,
+      message: "OTP sent to email. Please verify."
+    });
+
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.json({ success: false, message: "Email and OTP are required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.json({ success: false, message: "Account is already verified" });
+    }
+
+
+    if (user.otp !== otp) {
+      return res.json({ success: false, message: "Invalid OTP" });
+    }
+
+
+    if (user.otpExpires < Date.now()) {
+      return res.json({ success: false, message: "OTP has expired. Please register again." });
+    }
+
+    
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+  
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
     );
 
     res.json({
       success: true,
-      token
+      message: "Account created and verified successfully",
+      token,user: {
+        name: user.name,
+        email: user.email
+      }
     });
 
   } catch (error) {
-    res.json({
-      success: false,
-      message: error.message
-    });
+    res.json({ success: false, message: error.message });
   }
 };
 
-// ✅ LOGIN
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -79,7 +162,11 @@ export const adminLogin = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    res.json({ success: true, token });
+    res.json({ success: true, token , user: {
+        name: user.name,
+        email: user.email
+      }
+      });
 
   } catch (error) {
     res.json({
@@ -89,7 +176,6 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-// ✅ USER-SPECIFIC BLOGS
 export const getAllBlogsAdmin = async (req, res) => {
   try {
     const blogs = await Blog.find({ writer: req.user.id })
@@ -105,7 +191,7 @@ export const getAllBlogsAdmin = async (req, res) => {
   }
 };
 
-// ✅ USER-SPECIFIC COMMENTS
+
 export const getAllComments = async (req, res) => {
   try {
 
@@ -127,7 +213,6 @@ export const getAllComments = async (req, res) => {
   }
 };
 
-// ✅ USER DASHBOARD
 export const getDashboard = async (req, res) => {
   try {
 
@@ -168,7 +253,7 @@ export const getDashboard = async (req, res) => {
   }
 };
 
-// ✅ DELETE COMMENT (only if belongs to user blog)
+
 export const deleteCommentById = async (req, res) => {
   try {
     const { id } = req.body;
@@ -200,7 +285,7 @@ export const deleteCommentById = async (req, res) => {
   }
 };
 
-// ✅ APPROVE COMMENT (only if belongs to user blog)
+
 export const approveCommentById = async (req, res) => {
   try {
     const { id } = req.body;

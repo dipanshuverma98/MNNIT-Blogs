@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 const Login = () => {
 
-  const { axios, setToken, navigate } = useAppContext();
+  const { axios, setToken, navigate, setUser } = useAppContext();
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,11 +18,13 @@ const Login = () => {
       if (data.success) {
         setToken(data.token);
         localStorage.setItem('token', data.token);
-
-        // ✅ FIXED (no duplicate assignment)
+       
+        setUser(data.user); 
+        localStorage.setItem('user', JSON.stringify(data.user));
+  
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
 
-        navigate('/admin'); // optional redirect
+        navigate('/admin'); 
 
       } else {
         toast.error(data.message);
@@ -81,7 +83,7 @@ const Login = () => {
 
         </form>
 
-        {/* ✅ Signup link */}
+       
         <p className='text-center mt-4 text-sm'>
           Don’t have an account?{' '}
           <span

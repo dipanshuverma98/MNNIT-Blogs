@@ -49,7 +49,6 @@ const generateContent = async () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
-    // ✅ safety checks
     if (!quillRef.current) {
       toast.error("Editor not ready");
       return;
@@ -80,7 +79,7 @@ const generateContent = async () => {
       if (data.success) {
         toast.success(data.message);
 
-        // ✅ reset form
+       
         setImage(false);
         setTitle('');
         setSubTitle('');

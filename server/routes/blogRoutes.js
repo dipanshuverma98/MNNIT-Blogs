@@ -5,12 +5,10 @@ import auth from '../middlewares/auth.js';
 
 const blogRouter = express.Router();
 
-// ✅ fixed order
+
 blogRouter.post('/add', auth, upload.single('image'), addBlog);
 
 blogRouter.get('/all', getAllBlogs);
-
-// ✅ fixed param name
 
 blogRouter.post('/generate', auth, generateContent);
 blogRouter.get('/:id', getBlogById);

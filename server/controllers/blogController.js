@@ -40,7 +40,7 @@ export const addBlog = async (req, res) => {
       image,
       isPublished,
 
-      // ✅ ADD THIS (VERY IMPORTANT)
+    
       writer: req.user.id
     });
 
@@ -69,7 +69,7 @@ export const getAllBlogs = async (req, res) => {
 
 export const getBlogById = async (req, res) => {
   try {
-    const { id } = req.params; // ✅ FIXED
+    const { id } = req.params; 
 
     const blog = await Blog.findById(id).populate('writer', 'name');
 
@@ -93,7 +93,7 @@ export const deleteBlogById = async (req, res) => {
 
     await Blog.findByIdAndDelete(id);
 
-    // ✅ FIXED
+  
     await Comment.deleteMany({ blog: id });
 
     res.json({ success: true, message: "Blog deleted successfully" });

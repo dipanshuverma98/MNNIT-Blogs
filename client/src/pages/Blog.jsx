@@ -44,7 +44,7 @@ const Blog = () => {
         toast.success(data.message);
         setName('');
         setContent('');
-        fetchComments(); // ✅ refresh comments
+        fetchComments(); 
       } else {      
         toast.error(data.message);
       } 
@@ -56,7 +56,7 @@ const Blog = () => {
   useEffect(() => {
     fetchBlogData()
     fetchComments()
-  },[id]) // ✅ FIXED
+  },[id]) 
 
   return data ? (
     <div className='relative'>
@@ -77,7 +77,7 @@ const Blog = () => {
           {data.subTitle}
         </h2>
 
-        {/* ✅ dynamic writer name */}
+       
         <p className='inline-block py-1 px-4 rounded-full mb-6 border text-sm border-primary/35 bg-primary/5 font-medium text-primary'>
           {data.writer?.name || "Unknown Author"}
         </p>

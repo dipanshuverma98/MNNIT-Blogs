@@ -5,15 +5,19 @@ import Sidebar from '../../components/admin/Sidebar'
 import { useAppContext } from '../../context/AppContext.jsx';
 
 const Layout = () => {
-  const { axios, setToken, navigate } = useAppContext();
 
+  const { axios, setToken, navigate, user, setUser } = useAppContext();
+  
+
+  console.log("Current user data:", user);
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); 
 
-    // ✅ FIXED
     delete axios.defaults.headers.common['Authorization'];
 
     setToken(null);
+    if(setUser) setUser(null); // Reset user state
     navigate('/');
   }
 
@@ -27,12 +31,22 @@ const Layout = () => {
           onClick={() => navigate('/')}
         />
 
-        <button
-          onClick={logout}
-          className='text-sm px-8 py-2 bg-primary text-white rounded-full cursor-pointer'
-        >
-          Logout
-        </button>
+    
+        <div className='flex items-center gap-4'>
+        
+          {user && user.name && (
+             <p className='text-gray-600 font-medium hidden sm:block'>
+               Hello, <span className='text-primary'>{user.name}</span>
+             </p>
+          )}
+
+          <button
+            onClick={logout}
+            className='text-sm px-8 py-2 bg-primary text-white rounded-full cursor-pointer hover:bg-primary/90 transition-all'
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className='flex h-[calc(100vh-70px)]'>

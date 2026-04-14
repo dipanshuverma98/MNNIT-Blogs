@@ -10,13 +10,13 @@ export const addBlog = async (req, res) => {
     const imageFile = req.file;
 
     if (!title || !subTitle || !description || !category || !imageFile) {
-      return res.json({ success: false, message: "Missing required fields" });
+      return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
-    const fileBuffer = fs.readFileSync(imageFile.path);
+    const fileBase64 = imageFile.buffer.toString("base64");
 
     const response = await imagekit.upload({
-      file: fileBuffer,
+      file: fileBase64, 
       fileName: imageFile.originalname,
       folder: "/blogs"
     });
@@ -30,25 +30,21 @@ export const addBlog = async (req, res) => {
       ]
     });
 
-    const image = optimizedImageUrl;
-
     await Blog.create({
       title,
       subTitle,
       description,
       category,
-      image,
+      image: optimizedImageUrl,
       isPublished,
-
-    
-      writer: req.user.id
+      writer: req.user.id 
     });
 
-    res.json({ success: true, message: "Blog added successfully" });
+    res.status(201).json({ success: true, message: "Blog added successfully" });
 
   } catch (error) {
-    console.log(error);
-    res.json({
+    console.error("Add Blog Error:", error);
+    res.status(500).json({
       success: false,
       message: error.message
     });

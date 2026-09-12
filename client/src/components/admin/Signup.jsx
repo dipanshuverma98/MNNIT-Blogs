@@ -3,7 +3,7 @@ import { useAppContext } from '../../context/AppContext.jsx';
 import toast from 'react-hot-toast';
 
 const Signup = () => {
-  const { axios, setToken } = useAppContext();
+  const { axios, setToken, setUser, navigate } = useAppContext();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,6 +25,7 @@ const Signup = () => {
       if (data.success) {
         toast.success(data.message || "OTP sent to your email!");
         setStep(2); 
+      } else {
         toast.error(data.message);
       }
     } catch (error) {
@@ -47,6 +48,13 @@ const Signup = () => {
 
         setToken(data.token);
         localStorage.setItem('token', data.token);
+
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+
+        navigate('/');
 
       } else {
         toast.error(data.message);

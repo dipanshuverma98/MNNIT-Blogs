@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";  
 import toast from "react-hot-toast";
+import { blog_data } from "../assets/assets.js";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
@@ -23,23 +24,27 @@ export const AppProvider = ({ children }) => {
     const [token, setToken] = useState(savedToken || null);
     const [user, setUser] = useState(savedUser || null); 
     
-    const [blogs, setBlogs] = useState([]);
+    const [blogs, setBlogs] = useState(blog_data || []);
     const [input, setInput] = useState("");
 
     const fetchBlogs = async () => {
         try {
             const { data } = await axios.get('/api/blog/all');
-            data.success ? setBlogs(data.blogs) : toast.error(data.message);
+            if (data.success && data.blogs && data.blogs.length > 0) {
+                setBlogs(data.blogs);
+            } else if (!blogs || blogs.length === 0) {
+                setBlogs(blog_data);
+            }
         } catch (error) {
-            toast.error(error.message);
+            // Keep the static sample blogs on API error
+            if (!blogs || blogs.length === 0) {
+                setBlogs(blog_data);
+            }
         }   
     };
 
-   
     useEffect(() => {
-        if (blogs.length === 0) {
-            fetchBlogs();
-        }
+        fetchBlogs();
     }, []); 
 
   
@@ -53,6 +58,16 @@ export const AppProvider = ({ children }) => {
         }
     }, [token]);
 
+    const logout = () => {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        delete axios.defaults.headers.common['Authorization'];
+        toast.success("Logged out successfully");
+        navigate('/');
+    };
+
     const value = {
         axios,
         token,
@@ -64,7 +79,8 @@ export const AppProvider = ({ children }) => {
         setInput,
         navigate,
         user,     
-        setUser,   
+        setUser,
+        logout,
     };
 
     return (

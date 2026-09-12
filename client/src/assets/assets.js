@@ -180,6 +180,54 @@ export const blog_data = [
         "updatedAt": "2025-04-29T10:14:58.575Z",
         "__v": 0,
         "subTitle": "Navigating the Future Responsibly"
+    },
+    {
+        "_id": "681200000000000000000001",
+        "title": "Life at MNNIT: A Freshman's Ultimate Survival Guide",
+        "description": "<h2>Welcome to Motilal Nehru National Institute of Technology!</h2><p>Stepping through the main gates of MNNIT Allahabad in Teliarganj is the beginning of a transformative 4-year journey. Whether you're assigned to Swami Vivekananda Hostel (SVH) or Raman Hostel, the initial days can feel both exciting and overwhelming. Here is a curated guide to help every fresh batch navigate life on campus.</p><h3>1. The Hostel & Mess Experience</h3><p>Hostel life teaches you independence. From late-night Maggie sessions at the canteen to group study marathons before mid-sems, your hostel mates will become family. Keep your room organized, be friendly with the hostel caretakers, and explore mess alternatives like the Student Activity Centre (SAC) cafe when you need a break.</p><h3>2. Exploring Technical and Cultural Clubs</h3><p>MNNIT boasts an active club ecosystem:</p><ul><li><strong>Computer Coding Club (CC Club):</strong> The hub for competitive programmers and open-source enthusiasts.</li><li><strong>Robotics Club:</strong> Hands-on bots, microcontrollers, and national competitions.</li><li><strong>Rotaract & Literary Club:</strong> Debate, public speaking, and impactful community outreach.</li></ul><h3>3. Exploring Prayagraj</h3><p>Don't stay cooped up inside the campus on weekends! Head to Civil Lines for food, visit the sacred Triveni Sangam, and take an evening walk across Anand Bhavan. Balancing your academics with campus culture is the secret to an unforgettable college journey.</p>",
+        "category": "Lifestyle",
+        "image": blog_pic_1,
+        "isPublished": true,
+        "createdAt": "2025-05-01T09:00:00.000Z",
+        "updatedAt": "2025-05-01T09:00:00.000Z",
+        "__v": 0,
+        "subTitle": "Everything you need to know about hostels, clubs, and thriving in your first year"
+    },
+    {
+        "_id": "681200000000000000000002",
+        "title": "Avishkar: Inside MNNIT's Flagship Annual Tech Fest",
+        "description": "<h2>The Spirit of Innovation at MNNIT</h2><p>Every year, MNNIT Allahabad transforms into a tech haven during <strong>Avishkar</strong>, the institute's prestigious annual technical festival. Drawing thousands of participants across the country, Avishkar brings together coders, roboticists, designers, and innovators to compete and celebrate engineering excellence.</p><h3>Flagship Events That Define Avishkar</h3><ul><li><strong>CyberQuest:</strong> Flagship coding competitions including Insomnia (an all-night competitive programming battle) and SoftBlitz.</li><li><strong>Robomania:</strong> High-octane arena battles, line followers, and autonomous drone racing.</li><li><strong>Monopoly:</strong> Business pitching, fintech case studies, and startup plan presentations judged by angel investors.</li></ul><h3>Why You Should Participate</h3><p>Participating in Avishkar is more than just bagging prize money—it is about networking with peers from other IITs and NITs, testing your problem-solving under tight deadlines, and learning to collaborate under pressure.</p>",
+        "category": "Technology",
+        "image": blog_pic_2,
+        "isPublished": true,
+        "createdAt": "2025-05-02T10:30:00.000Z",
+        "updatedAt": "2025-05-02T10:30:00.000Z",
+        "__v": 0,
+        "subTitle": "Northern India's largest technical festival: robotics, hackathons, and guest lectures"
+    },
+    {
+        "_id": "681200000000000000000003",
+        "title": "Cracking Software Placements: A Roadmap for Engineers",
+        "description": "<h2>The Placement Blueprint from MNNIT Seniors</h2><p>MNNIT Allahabad has consistently had one of the strongest placement statistics among NITs. With top tech giants and startups visiting campus every season, having a structured roadmap from your second year onwards makes all the difference.</p><h3>Phase 1: Solidifying Data Structures and Algorithms (DSA)</h3><p>Start with a core programming language (C++ or Java). Master the fundamentals: Arrays, Strings, Two Pointers, Trees, Graphs, and Dynamic Programming.</p><h3>Phase 2: Project Building and Core CS Subjects</h3><p>Build 2 standout full-stack or systems projects that solve real problems. Prepare Operating Systems, DBMS, and Computer Networks thoroughly.</p><h3>Phase 3: Mock Interviews and Behavioral Rounds</h3><p>Practice speaking your thought process aloud. Companies look for problem-solving adaptability, humble demeanor, and clear communication.</p>",
+        "category": "Startup",
+        "image": blog_pic_3,
+        "isPublished": true,
+        "createdAt": "2025-05-03T11:15:00.000Z",
+        "updatedAt": "2025-05-03T11:15:00.000Z",
+        "__v": 0,
+        "subTitle": "Practical strategies for DSA, system design, core subjects, and interviews"
+    },
+    {
+        "_id": "681200000000000000000004",
+        "title": "Culrav: The Grand Cultural Spectacle of MNNIT",
+        "description": "<h2>The Magic of Culrav</h2><p>When the spring semester peaks, MNNIT swaps coding terminals for guitars, spotlights, and dance shoes. <strong>Culrav</strong> is MNNIT's flagship annual cultural festival, celebrating creativity and artistic expression.</p><h3>Unforgettable Highlights</h3><ul><li><strong>Razzmatazz & Spandan:</strong> The inter-college dance and choreography face-offs that electrify the main auditorium.</li><li><strong>Rock Night:</strong> High-octane headlining bands bringing unforgettable live music to the open ground.</li><li><strong>Rangsaazi:</strong> Fine arts and graffiti displays adorning the campus walkways.</li></ul><p>Culrav creates memories that stay with alumni for decades. It is the time when batchmates come together, volunteers work tirelessly behind the scenes, and the campus truly comes alive.</p>",
+        "category": "Lifestyle",
+        "image": blog_pic_5,
+        "isPublished": true,
+        "createdAt": "2025-05-04T12:00:00.000Z",
+        "updatedAt": "2025-05-04T12:00:00.000Z",
+        "__v": 0,
+        "subTitle": "Four days of musical nights, choreography competitions, and dramatic performances"
     }
 ]
 

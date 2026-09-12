@@ -2,6 +2,7 @@ import fs from 'fs';
 import imagekit from '../configs/imagekit.js';
 import Blog from '../models/Blog.js';
 import Comment from '../models/Comment.js';
+import User from '../models/User.js';
 import main from '../configs/gemini.js';
 
 export const addBlog = async (req, res) => {
@@ -124,11 +125,37 @@ export const togglePublush = async (req, res) => {
 
 export const addComment = async (req, res) => {
   try {
-    const { blog, name, content } = req.body;
+    const { blog, content } = req.body;
+
+    if (!blog || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Blog ID and comment content are required"
+      });
+    }
+
+    // req.user is set by auth middleware
+    let commentAuthorName = req.body.name;
+    let userId = req.user?.id;
+
+    if (userId) {
+      const user = await User.findById(userId);
+      if (user) {
+        commentAuthorName = user.name;
+      }
+    }
+
+    if (!commentAuthorName) {
+      return res.status(401).json({
+        success: false,
+        message: "User must be logged in to comment"
+      });
+    }
 
     await Comment.create({
       blog,
-      name,
+      name: commentAuthorName,
+      user: userId,
       content
     });
 

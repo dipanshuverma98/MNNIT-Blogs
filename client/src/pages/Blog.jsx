@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { assets } from '../assets/assets'
+import { assets, blog_data, comments_data } from '../assets/assets'
 import Navbar from '../components/Navbar'
 import Moment from 'moment'
 import Footer from '../components/Footer'
@@ -11,45 +11,79 @@ import toast from 'react-hot-toast'
 const Blog = () => {
   const { id } = useParams()
 
-  const { axios } = useAppContext();
+  const { axios, token, user, navigate } = useAppContext();
 
   const [data, setData] = useState(null)
   const [comments, setComments] = useState([])
-  const [name, setName] = useState('')
   const [content, setContent] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const fetchBlogData = async () => {
     try {
       const { data } = await axios.get(`/api/blog/${id}`);
-      data.success ? setData(data.blog) : toast.error(data.message);
+      if (data.success && data.blog) {
+        setData(data.blog);
+      } else {
+        const fallback = blog_data.find((b) => b._id === id);
+        if (fallback) setData(fallback);
+      }
     } catch (error) {
-      toast.error(error.message);
+      const fallback = blog_data.find((b) => b._id === id);
+      if (fallback) {
+        setData(fallback);
+      } else {
+        toast.error(error.message);
+      }
     }
   }
 
   const fetchComments = async () => {
     try {
       const { data } = await axios.post(`/api/blog/comments`, { blogId: id });
-      data.success ? setComments(data.comments) : toast.error(data.message);
+      if (data.success) {
+        setComments(data.comments);
+      } else {
+        const fallbackComments = comments_data.filter((c) => c.blog?._id === id || c.blog === id);
+        setComments(fallbackComments);
+      }
     } catch (error) {
-      toast.error(error.message);
+      const fallbackComments = comments_data.filter((c) => c.blog?._id === id || c.blog === id);
+      setComments(fallbackComments);
     }
   }
 
   const addComment = async (e) => {
     e.preventDefault();
+
+    if (!token) {
+      toast.error("Please login to comment");
+      navigate('/login');
+      return;
+    }
+
+    if (!content.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const { data } = await axios.post(`/api/blog/addcomment`, { blog: id, name, content });   
+      const { data } = await axios.post(`/api/blog/addcomment`, { 
+        blog: id, 
+        content,
+        name: user?.name 
+      });   
       if (data.success) {
         toast.success(data.message);
-        setName('');
         setContent('');
         fetchComments(); 
       } else {      
         toast.error(data.message);
       } 
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -117,25 +151,51 @@ const Blog = () => {
         </div>
 
         <div className='max-w-3xl mx-auto'>
-          <form onSubmit={addComment} className='flex flex-col gap-4 max-w-lg'>
-            <input 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-              placeholder='Name' 
-              required 
-              className='p-2 border rounded' 
-            />
-            <textarea 
-              value={content} 
-              onChange={(e) => setContent(e.target.value)} 
-              placeholder='Comment' 
-              required 
-              className='p-2 border rounded h-40'
-            ></textarea>
-            <button className='bg-primary text-white px-6 py-2 rounded'>
-              Submit
-            </button>
-          </form>
+          {token ? (
+            <form onSubmit={addComment} className='flex flex-col gap-4 max-w-lg'>
+              <div className='flex items-center gap-2 text-sm text-gray-600 mb-1'>
+                <span>Commenting as:</span>
+                <span className='font-semibold text-gray-800'>{user?.name || "Registered User"}</span>
+              </div>
+              <textarea 
+                value={content} 
+                onChange={(e) => setContent(e.target.value)} 
+                placeholder='Share your thoughts on this blog...' 
+                required 
+                className='p-3 border border-gray-300 rounded-lg h-32 focus:outline-none focus:border-primary text-gray-700'
+              ></textarea>
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className='bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50'
+              >
+                {isSubmitting ? "Submitting..." : "Submit Comment"}
+              </button>
+            </form>
+          ) : (
+            <div className='p-6 border border-primary/20 bg-primary/5 rounded-xl text-center max-w-lg'>
+              <h3 className='font-semibold text-gray-800 text-lg mb-2'>
+                Join the conversation
+              </h3>
+              <p className='text-sm text-gray-600 mb-4'>
+                Only registered users can comment on blogs. Please login or register an account to leave a comment.
+              </p>
+              <div className='flex justify-center gap-3'>
+                <button
+                  onClick={() => navigate('/login')}
+                  className='text-sm font-medium px-5 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-all'
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => navigate('/signup')}
+                  className='text-sm font-medium px-5 py-2 border border-primary text-primary rounded-full hover:bg-primary/10 transition-all'
+                >
+                  Create Account
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>

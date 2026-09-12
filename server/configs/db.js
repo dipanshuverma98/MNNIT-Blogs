@@ -1,4 +1,12 @@
 import mongoose from "mongoose";
+import dns from "dns";
+
+// Ensure MongoDB SRV records resolve reliably on all networks/environments
+try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+    // ignore if restricted
+}
 
 
 const connectDB = async () => {

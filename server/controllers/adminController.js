@@ -51,23 +51,34 @@ export const registerUser = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail', 
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS 
+        user: process.env.EMAIL_USER?.trim(),
+        pass: process.env.EMAIL_PASS?.trim() 
       }
     });
 
-  
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: 'Your Registration OTP',
-      html: `
-        <h2>Hello ${user.name},</h2>
-        <p>Your One-Time Password (OTP) for registration is:</p>
-        <h1 style="color: blue; letter-spacing: 5px;">${otp}</h1>
-        <p>This code will expire in 10 minutes.</p>
-      `
-    });
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER?.trim(),
+        to: user.email,
+        subject: 'Your Registration OTP',
+        html: `
+          <h2>Hello ${user.name},</h2>
+          <p>Your One-Time Password (OTP) for registration is:</p>
+          <h1 style="color: blue; letter-spacing: 5px;">${otp}</h1>
+          <p>This code will expire in 10 minutes.</p>
+        `
+      });
+      console.log(`OTP sent to ${user.email}`);
+    } catch (mailError) {
+      console.error("Nodemailer sendMail failed:", mailError.message);
+      console.log(`[FALLBACK OTP for ${user.email}]: ${otp}`);
+      // In development or when Gmail rejects credentials, inform the client
+      return res.json({
+        success: true,
+        message: "OTP generated (Email provider unavailable). Check server console or verify.",
+        otp: process.env.NODE_ENV === 'production' ? undefined : otp
+      });
+    }
 
     res.json({
       success: true,
@@ -138,8 +149,14 @@ export const verifyOtp = async (req, res) => {
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email ? email.toLowerCase().trim() : '';
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ 
+      $or: [
+        { email: normalizedEmail },
+        { email: email }
+      ]
+    });
 
     if (!user) {
       return res.json({
